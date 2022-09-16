@@ -1,0 +1,52 @@
+<launch>
+    <arg name="usb_port_motor"                default="/dev/ttyUSB0"/>
+    <arg name="dxl_baud_rate"           default="1000000"/>
+    <arg name="control_frequency"           default="30"/>
+    <arg name="velocity_profile"           default="150"/>
+    <arg name="accelearion_profile"           default="75"/>
+    <arg name="joystick_speed"           default="2"/>
+    <arg name="rotation_speed"           default="2"/>
+
+    <arg name="model" default="$(find platform_manipulator_imu)/urdf/box.urdf"/>
+    <arg name="rvizconfig" default="$(find platform_manipulator_imu)/rviz/urdf.rviz" />
+    <arg name="usb_port_imu"                default="/dev/ttyUSB1"/>
+    <arg name="usb_port_imu_wireless"                default="/dev/ttyACM0"/>
+
+
+    <param name="control_frequency" type="int" value="$(arg control_frequency)"/>
+    <param name="usb_port_motor" type="string" value="$(arg usb_port_motor)"/>
+    <param name="dxl_baud_rate" type="int" value="$(arg dxl_baud_rate)"/>
+    <param name="velocity_profile" type="int" value="$(arg velocity_profile)"/>
+    <param name="accelearion_profile" type="int" value="$(arg accelearion_profile)"/>
+    <param name="joystick_speed" type="int" value="$(arg joystick_speed)"/>
+    <param name="rotation_speed" type="int" value="$(arg rotation_speed)"/>
+
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+
+
+    <node pkg="platform_manipulator" name="platform_motor_setter" type="platform_motor_setter" output="screen"/>
+    <node pkg="platform_manipulator" name="platform_inverse_kinematics" type="platform_inverse_kinematics"/>
+    <node pkg="joy" name="joy_node" type="joy_node">
+        <param name="autorepeat_rate"              value="$(arg control_frequency)"/>
+    </node>
+    <node pkg="platform_manipulator" name="read_joy_game" type="read_joy_game"/>
+    <node pkg="platform_manipulator_cvx" name="platform_cvx" type="platform_cvx"/>
+
+    <remap from="/imu/data" to="wired_imu/data"/>
+    <remap from="/imu/reset" to="wired_imu/reset"/>
+    <node pkg="um7" name="um7_driver_wired" type="um7_driver" args="_port:=$(arg usb_port_imu)"/>
+
+    <remap from="/imu/data" to="wireless_imu/data"/>
+    <remap from="/imu/reset" to="wireless_imu/reset"/>
+    <node pkg="um7" name="um7_driver_wireless" type="um7_driver" args="_port:=$(arg usb_port_imu_wireless)"/>
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+    
+    <node pkg="platform_manipulator_imu" type="imu_tf_broadcaster" name="imu_tf_broadcaster" output="screen"/>
+    <node pkg="platform_manipulator_imu" type="platform_tf_broadcaster" name="platfor_tf_broadcaster" output="screen"/>
+    <node pkg="platform_manipulator_imu" type="imu_tf_broadcaster_wireless" name="imu_tf_broadcaster_wireless" output="screen"/>
+
+</launch>

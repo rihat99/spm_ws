@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<robot name="imu">
+
+    <material name="white">
+      <color rgba="1 1 1 1"/>
+    </material>
+
+    <link name="base_link"> </link>
+    
+
+    <!-- <joint name="world_joint" type="fixed">
+      <origin xyz="0 0 0.5" rpy="0 0 0" />
+      <parent link="base_link" />
+      <child link="plane" />
+    </joint> -->
+
+    <!-- <link name="plane"> </link> -->
+
+
+    <link name="base">
+        <visual>
+          <geometry>
+            <box size="0.6 0.6 0.1"/>
+          </geometry>
+          <material name="white"/>
+        </visual>
+    </link>
+
+    <link name="platform">
+      <visual>
+        <geometry>
+          <box size="0.6 0.6 0.1"/>
+        </geometry>
+        <material name="white"/>
+      </visual>
+    </link>
+
+    <link name="platform_imu">
+      <visual>
+        <geometry>
+          <box size="0.6 0.6 0.1"/>
+        </geometry>
+        <material name="white"/>
+      </visual>
+    </link>
+
+    <joint name="base_to_base_link" type="fixed">
+      <parent link="base_link"/>
+      <child link="base"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="platform_to_base_link" type="fixed">
+      <parent link="base_link"/>
+      <child link="platform"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="platform_imu_to_base_link" type="fixed">
+      <parent link="base_link"/>
+      <child link="platform_imu"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    
+</robot>

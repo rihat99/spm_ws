@@ -1,0 +1,25 @@
+<launch>
+
+    <arg name="model" default="$(find platform_manipulator_imu)/urdf/box.urdf"/>
+    <arg name="gui" default="true" />
+    <arg name="rvizconfig" default="$(find platform_manipulator_imu)/rviz/urdf.rviz" />
+    <arg name="usb_port"                default="/dev/ttyUSB1"/>
+  
+    <param name="robot_description" command="$(find xacro)/xacro $(arg model)" />
+    <param name="use_gui" value="$(arg gui)"/>
+  
+
+    <node pkg="serial_comm" name="serial_comm_single" type="serial_comm_single"/>
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" />
+
+    <node pkg="platform_manipulator_imu" type="imu_tf_broadcaster_wireless" name="imu_tf_broadcaster_wireless"/>
+
+    <node pkg="platform_manipulator" name="platform_motor_setter" type="platform_motor_setter"/>
+    <node pkg="platform_manipulator" name="platform_inverse_kinematics" type="platform_inverse_kinematics"/>
+
+    
+
+</launch>
